@@ -44,6 +44,7 @@ fn main() -> io::Result<()> {
             Resource { location: "/", mime_type: MimeType::Html, content: include_bytes!("..\\res\\index.html") },
             Resource { location: "/quit", mime_type: MimeType::Html, content: include_bytes!("..\\res\\exit.html") },
             Resource { location: "/favicon.ico", mime_type: MimeType::Ico, content: include_bytes!("..\\res\\favicon.ico") },
+            Resource { location: "/index.css", mime_type: MimeType::Css, content: include_bytes!("..\\res\\index.css") },
         ];
 
         'incoming: for stream in listener.incoming() {
