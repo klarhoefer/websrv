@@ -12,7 +12,8 @@ enum HttpMethod {
 #[derive(Debug)]
 pub struct Request {
     method: HttpMethod,
-    url: String
+    location: String,
+    version: String,
 }
 
 
@@ -58,14 +59,15 @@ impl Request {
                 _ => HttpMethod::Unknown
             };
     
-            let url = String::from_utf8_lossy(&buffer[a+1..b]).to_string();
-            Ok(Request { method, url })
+            let location = String::from_utf8_lossy(&buffer[a+1..b]).to_string();
+            let version = String::from_utf8_lossy(&buffer[b+1..c]).to_string();
+            Ok(Request { method, location, version })
         } else {
             Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid request"))
         }
     }
 
     pub fn location(&self) -> &str {
-        &self.url
+        &self.location
     }
 }
