@@ -42,9 +42,9 @@ fn main() -> io::Result<()> {
 
         let resources = [
             Resource { location: "/", mime_type: MimeType::Html, content: include_bytes!("..\\res\\index.html") },
-            Resource { location: "/quit", mime_type: MimeType::Html, content: include_bytes!("..\\res\\exit.html") },
             Resource { location: "/favicon.ico", mime_type: MimeType::Ico, content: include_bytes!("..\\res\\favicon.ico") },
             Resource { location: "/index.css", mime_type: MimeType::Css, content: include_bytes!("..\\res\\index.css") },
+            Resource { location: "/exit.html", mime_type: MimeType::Html, content: include_bytes!("..\\res\\exit.html") },
         ];
 
         'incoming: for stream in listener.incoming() {
@@ -54,17 +54,18 @@ fn main() -> io::Result<()> {
                     let mut handled = false;
 
                     let location = req.location();
+                    if location == "/quit" {
+                        break 'incoming;
+                    }
+
                     for res in &resources {
                         if res.location == location {
                             let _ = res.send(&mut stream);
-                            if location == "/quit" {
-                                break 'incoming;
-                            }
                             handled = true;
                             break;
-                        }
-                    }
-
+                        }    
+                    }    
+                    
                     if !handled {
     
                     }
