@@ -11,12 +11,12 @@ type LSTATUS = c_long;
 
 extern "system" {
     fn RegGetValueA(
-        hkey: HKEY, 
-        lpSubKey: LPCSTR, 
-        lpValue: LPCSTR, 
-        dwFlags: DWORD, 
-        pdwType: LPDWORD, 
-        pvData: PVOID, 
+        hkey: HKEY,
+        lpSubKey: LPCSTR,
+        lpValue: LPCSTR,
+        dwFlags: DWORD,
+        pdwType: LPDWORD,
+        pvData: PVOID,
         pcbData: LPDWORD
     ) -> LSTATUS;
 }
@@ -35,7 +35,7 @@ pub fn get_chrome_path() -> Option<String> {
             b"\0" as *const _ as LPCSTR,
             0xffff,
             NULL as LPDWORD,
-            &mut buffer as *mut _ as PVOID,
+            buffer.as_mut_ptr() as PVOID,
             &mut count as LPDWORD
         );
         if status == ERROR_SUCCESS {

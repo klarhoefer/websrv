@@ -12,11 +12,12 @@ enum HttpMethod {
 #[derive(Debug)]
 pub struct Request {
     method: HttpMethod,
-    url: String
+    location: String,
+    version: String,
 }
 
 
-fn parse_line(buffer: &[u8]) -> Option<(usize, usize, usize)> {
+fn parse_first_line(buffer: &[u8]) -> Option<(usize, usize, usize)> {
     let mut blanks = [0usize; 2];
     let mut count = 0;
     let mut i = 0;
@@ -50,22 +51,23 @@ impl Request {
             return Err(io::Error::new(io::ErrorKind::UnexpectedEof, "Nothing read"));
         }
 
-        if let Some((a, b, c)) = parse_line(&buffer[..count]) {
-            let method = match &buffer[..a] {
+        if let Some((blank0, blank1, eol)) = parse_first_line(&buffer[..count]) {
+            let method = match &buffer[..blank0] {
                 b"GET" => HttpMethod::Get,
                 b"POST" => HttpMethod::Post,
                 b"PUT" => HttpMethod::Put,
                 _ => HttpMethod::Unknown
             };
     
-            let url = String::from_utf8_lossy(&buffer[a+1..b]).to_string();
-            Ok(Request { method, url })
+            let location = String::from_utf8_lossy(&buffer[blank0+1..blank1]).to_string();
+            let version = String::from_utf8_lossy(&buffer[blank1+1..eol]).to_string();
+            Ok(Request { method, location, version })
         } else {
             Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid request"))
         }
     }
 
     pub fn location(&self) -> &str {
-        &self.url
+        &self.location
     }
 }
